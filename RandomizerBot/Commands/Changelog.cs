@@ -26,6 +26,7 @@ public class Changelog : AbstractCommand
             str.Append("```");
             str.Append(File.ReadAllText("Changelog.txt"));
             str.AppendLine("```");
+            str.AppendLine("A full changelog can be found on the github at https://github.com/vonderborch/RandomizerBot");
 
             SendMessage(messageArgs, str.ToString());
         }

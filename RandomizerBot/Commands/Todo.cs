@@ -26,7 +26,7 @@ public class Todo : AbstractCommand
             str.AppendLine("```");
             str.Append(File.ReadAllText("Todo.txt"));
             str.AppendLine("```");
-            str.AppendLine("A full to-do list can be found on the github at ");
+            str.AppendLine("A full to-do list can be found on the github at https://github.com/vonderborch/RandomizerBot");
 
             SendMessage(messageArgs, str.ToString());
         }
