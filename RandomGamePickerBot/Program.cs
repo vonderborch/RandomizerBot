@@ -1,13 +1,15 @@
 ﻿using System;
+using RandomGamePickerBot;
 
 namespace RandomGamePickerBot
 {
-    public class Program
+    class Program
     {
+        // Program entry point
         static void Main(string[] args)
         {
             var bot = new Bot();
-            bot.BotAsync().Wait(-1);
+            bot.RunBot().Wait(-1);
         }
     }
 }
