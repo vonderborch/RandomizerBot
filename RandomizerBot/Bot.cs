@@ -1,8 +1,7 @@
-﻿using System;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 
-namespace RandomGamePickerBot
+namespace RandomizerBot
 {
     public class Bot
     {

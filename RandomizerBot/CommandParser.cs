@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 
-namespace RandomGamePickerBot
+namespace RandomizerBot
 {
     public static class CommandParser
     {
         public static void ParseCommand(string message, SocketMessage messageArgs)
         {
-            if (!message.StartsWith("!rb_"))
+            if (!message.StartsWith("!rb"))
             {
                 return;
             }
@@ -21,7 +16,7 @@ namespace RandomGamePickerBot
             var args = message.Split(' ');
             if (args.Length > 0)
             {
-                if (commands.TryGetValue(args[0].Replace("!rb_", ""), out var cmd))
+                if (commands.TryGetValue(args[0].Replace("!rb_", "").Replace("!rb", ""), out var cmd))
                 {
                     if (cmd.RequiredArgumentCount > args.Length - 1)
                     {
@@ -38,7 +33,11 @@ namespace RandomGamePickerBot
                         }
                     }
 
-                    cmd.Execute(parsedArguments, messageArgs);
+                    var good = cmd.Execute(parsedArguments, messageArgs);
+                    if (!good)
+                    {
+                        messageArgs.Channel.SendMessageAsync($"Invalid Usage! Correct Usage:```{cmd.GetErrorMessage()}```");
+                    }
                 }
                 else
                 {

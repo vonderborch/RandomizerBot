@@ -1,7 +1,7 @@
-﻿using RandomGamePickerBot.Commands;
-using RandomGamePickerBot.Commands.Internal;
+﻿using RandomizerBot.Commands;
+using RandomizerBot.Commands.Internal;
 
-namespace RandomGamePickerBot
+namespace RandomizerBot
 {
     public sealed class CommandRegister
     {
@@ -17,7 +17,7 @@ namespace RandomGamePickerBot
         {
             RegisterCommand(new HelloWorld());
             RegisterCommand(new Help());
-            RegisterCommand(new AddList());
+            RegisterCommand(new CreateList());
             RegisterCommand(new FlipCoin());
         }
 

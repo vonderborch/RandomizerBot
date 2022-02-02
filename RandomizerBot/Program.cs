@@ -1,7 +1,4 @@
-﻿using System;
-using RandomGamePickerBot;
-
-namespace RandomGamePickerBot
+﻿namespace RandomizerBot
 {
     class Program
     {
