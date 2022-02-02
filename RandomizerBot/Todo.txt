@@ -1,0 +1,6 @@
+﻿- Version 1.1.0
+--- Named Parameters
+--- Command Aliases
+--- Ability to make commands not listed in the help menu (easter eggs)
+- Version 2.0.0
+--- Use Databases!

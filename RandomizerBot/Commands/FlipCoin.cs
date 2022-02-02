@@ -8,7 +8,7 @@ public class FlipCoin : AbstractCommand
 {
     private readonly Random _randomizer;
 
-    public FlipCoin() : base("flipcoin", "Flips a coin and returns heads or tails depending on the result")
+    public FlipCoin() : base("flip_coin", "Flips a coin and returns heads or tails depending on the result")
     {
         _randomizer = new Random();
     }
@@ -21,7 +21,7 @@ public class FlipCoin : AbstractCommand
             false));
     }
 
-    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs)
+    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
     {
         //// Determine the number of coin flips to execute...
         var timesRaw = "1";
@@ -62,7 +62,9 @@ public class FlipCoin : AbstractCommand
             }
 
             if (showIndividualResults) str.AppendLine("");
-            str.AppendLine($"Total Heads: {heads}, Total Tails: {tails}");
+            str.AppendLine($"Totals:");
+            str.AppendLine($"  - Heads: {heads}");
+            str.AppendLine($"  - Tails: {tails}");
         }
 
 

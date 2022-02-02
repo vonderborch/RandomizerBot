@@ -1,4 +1,5 @@
 ﻿using RandomizerBot.Commands;
+using RandomizerBot.Commands.GameListCommands;
 using RandomizerBot.Commands.Internal;
 
 namespace RandomizerBot
@@ -15,10 +16,27 @@ namespace RandomizerBot
 
         private CommandRegister()
         {
-            RegisterCommand(new HelloWorld());
             RegisterCommand(new Help());
-            RegisterCommand(new CreateList());
+            RegisterCommand(new Changelog());
+            RegisterCommand(new Commands.Version());
+            RegisterCommand(new Todo());
             RegisterCommand(new FlipCoin());
+            RegisterCommand(new D4());
+            RegisterCommand(new D6());
+            RegisterCommand(new D8());
+            RegisterCommand(new D10());
+            RegisterCommand(new D12());
+            RegisterCommand(new D20());
+            RegisterCommand(new RandomList());
+            RegisterCommand(new CreateGameList());
+            RegisterCommand(new DeleteGameList());
+            RegisterCommand(new ViewGameListGames());
+            RegisterCommand(new AddGameToGameList());
+            RegisterCommand(new RemoveGameFromGameList());
+            RegisterCommand(new ToggleGameEnablement());
+            RegisterCommand(new DisableAllGamesInGameList());
+            RegisterCommand(new EnableAllGamesInGameList());
+            RegisterCommand(new RandomizeGameListGames());
         }
 
         public static CommandRegister Instance => _instance;

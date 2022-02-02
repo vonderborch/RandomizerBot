@@ -14,7 +14,7 @@ public class Help : AbstractCommand
     {
     }
 
-    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs)
+    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
     {
         var maxCommandNameLength = int.MinValue;
         foreach (var cmd in CommandRegister.Instance.Commands)
