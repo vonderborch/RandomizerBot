@@ -45,7 +45,7 @@ public class CreateGameList : AbstractCommand
             Directory.CreateDirectory(Path.GetDirectoryName(fileName));
             File.WriteAllText(fileName, JsonConvert.SerializeObject(new GameList(name, isPersonal ? messageArgs.Author.Username : server.Name, isPersonal)));
 
-            SendMessage(messageArgs, "Created a new list named {name} (full name: {fileName})!");
+            SendMessage(messageArgs, $"Created a new list named {name} (full name: {fileName})!");
         }
 
         return true;

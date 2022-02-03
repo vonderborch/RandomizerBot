@@ -28,6 +28,7 @@ namespace RandomizerBot
             RegisterCommand(new D12());
             RegisterCommand(new D20());
             RegisterCommand(new RandomList());
+            RegisterCommand(new ViewAllGameListGames());
             RegisterCommand(new CreateGameList());
             RegisterCommand(new DeleteGameList());
             RegisterCommand(new ViewGameListGames());
