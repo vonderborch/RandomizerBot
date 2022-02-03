@@ -6,7 +6,7 @@ namespace RandomizerBot.Commands;
 
 public class Version : AbstractCommand
 {
-    public Version() : base("version", "Displays the current version to the user.")
+    public Version() : base("version", "Displays the current version to the user")
     {
     }
 

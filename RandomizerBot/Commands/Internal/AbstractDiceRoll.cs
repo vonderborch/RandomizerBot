@@ -9,7 +9,7 @@ public abstract class AbstractDiceRoll : AbstractCommand
     protected int _faces = 0;
     protected List<string> _namedFaces;
 
-    protected AbstractDiceRoll(int faces, List<string> namedFaces = null) : base($"roll_d{faces}", $"Rolls a D{faces} dice for the user.")
+    protected AbstractDiceRoll(int faces, List<string> namedFaces = null) : base($"roll_d{faces}", $"Rolls a D{faces} dice for the user")
     {
         _randomizer = new Random();
         _faces = faces;

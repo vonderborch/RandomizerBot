@@ -25,13 +25,20 @@ public abstract class AbstractCommand
 
     public string GetErrorMessage()
     {
-        var str = new StringBuilder();
-        str.Append($"!rb_{Command} ");
-        for (var i = 0; i < Arguments.Count; i++) str.Append($"{Arguments[i].Parameter} ");
+        var str = GetParametersList();
         str.AppendLine(" ");
         for (var i = 0; i < Arguments.Count; i++) str.AppendLine($"{Arguments[i].HelpMessage} ");
 
         return str.ToString();
+    }
+
+    public StringBuilder GetParametersList()
+    {
+        var str = new StringBuilder();
+        str.Append($"!rb_{Command} ");
+        for (var i = 0; i < Arguments.Count; i++) str.Append($"{Arguments[i].Parameter} ");
+
+        return str;
     }
 
     public bool Execute(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
