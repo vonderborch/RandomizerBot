@@ -3,6 +3,7 @@ A simple and pretty badly coded bot enabling randomization of various things
 
 # Available Commands
 Command | Description
+---------------------------------------|-------------------------------------------------------
 !rb_help                               | Displays a list of all available commands to the user
 !rb_changelog                          | Displays a changelog of the bot to the user
 !rb_version                            | Displays the current version to the user
