@@ -1,5 +1,5 @@
 # RandomizerBot
-A simple bot enabling randomization of various things
+A simple and pretty badly coded bot enabling randomization of various things
 
 # Available Commands
 Command | Description
