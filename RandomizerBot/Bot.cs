@@ -19,6 +19,8 @@ namespace RandomizerBot
             var token = File.ReadAllText("Token.txt");
             // var token = JsonConvert.DeserializeObject<AConfigurationClass>(File.ReadAllText("config.json")).Token;
 
+            Console.WriteLine($"Bot Version: {Constants.Version}");
+
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 

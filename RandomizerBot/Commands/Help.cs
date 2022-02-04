@@ -32,7 +32,7 @@ public class Help : AbstractCommand
                 maxCommandNameLength = $"!rb_{cmd.Key}".Length;
 
         var str = new StringBuilder();
-        str.AppendLine("Available Commands:```");
+        str.AppendLine($"Available Commands (bot v{Constants.Version}):```");
         var seperator = use_table_formatting ? " | " : " - ";
         
         foreach (var cmd in CommandRegister.Instance.Commands)

@@ -16,12 +16,6 @@ public class ViewAllGameListGames : AbstractCommand
 
     public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
     {
-        // get the args...
-        if (!args.TryGetValue("name", out var name))
-        {
-            return false;
-        }
-
         var personalDirectory = messageArgs.Author.Username;
         var serverDirectory = server.Name;
 

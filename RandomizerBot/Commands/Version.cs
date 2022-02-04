@@ -16,7 +16,7 @@ public class Version : AbstractCommand
 
     public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
     {
-        SendMessage(messageArgs, $"RandomizerBot Version {Assembly.GetEntryAssembly().GetName().Version}");
+        SendMessage(messageArgs, $"RandomizerBot Version {Constants.Version}");
         return true;
     }
 }
