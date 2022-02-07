@@ -1,53 +1,72 @@
 ﻿using System.Text;
 using Discord.WebSocket;
-using RandomizerBot.Commands.Internal;
+using RandomizerBot.Helpers;
+using Velentr.Miscellaneous.CommandParsing;
 
-namespace RandomizerBot.Commands;
-
-public class Help : AbstractCommand
+namespace RandomizerBot.Commands
 {
-    public Help() : base("help", "Displays a list of all available commands to the user")
+    public class Help : DefaultHelpCommand
     {
-    }
-
-    public override void BuildParameterHelper()
-    {
-        Arguments.Add(new Argument("use_table_formatting", "Use table formatting to display available commands. Defaults to True.", false));
-    }
-
-    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
-    {
-        var use_table_formatting = true;
-        if (args.TryGetValue("use_table_formatting", out var use_table_formattingRaw))
+        public Help() : base()
         {
-            if (!bool.TryParse(use_table_formattingRaw, out use_table_formatting))
+            AddArgument("print_as_text_file", "Whether to print the whole message in a single message by attaching the results as a text file or not. Defaults to true if the commands response exceeds the max message length.", typeof(bool), true);
+        }
+
+        public override StringBuilder ExecutePreCommand(StringBuilder str, Dictionary<string, IParameter> parameters, Dictionary<string, object> args)
+        {
+            var messageArgs = (SocketMessage)args["SocketMessage"];
+            var server = (SocketGuild)args["Server"];
+            var parameterMessages = new StringBuilder();
+
+            BotCommandParser.Log($"Executing command [{Name}] for user [{messageArgs.Author.Username}] on server [{server.Name}] with parameters: {parameterMessages}");
+
+            return str;
+        }
+
+        public override void ExecutePostCommand(StringBuilder str, Dictionary<string, IParameter> parameters, Dictionary<string, object> args)
+        {
+            var messageArgs = (SocketMessage)args["SocketMessage"];
+
+            SendMessage(messageArgs, parameters["print_as_text_file"], str.ToString());
+
+            var commandToExecuteOn = (parameters["command"].RawValue).ToLowerInvariant();
+            var failureCase = GetParameterValueIfExistsAsString("failure_case", parameters);
+            if (string.IsNullOrWhiteSpace(commandToExecuteOn) && string.IsNullOrWhiteSpace(failureCase))
             {
-                use_table_formatting = true;
+                SendMessage(messageArgs, "To get more help about a specific method, use the following command: `!rb_help <methodname>` (Example: `!rb_help !rb_changelog`)");
             }
         }
 
-        var maxCommandNameLength = int.MinValue;
-        foreach (var cmd in CommandRegister.Instance.Commands)
-            if (cmd.Key.Length > maxCommandNameLength)
-                maxCommandNameLength = $"!rb_{cmd.Key}".Length;
-
-        var str = new StringBuilder();
-        str.AppendLine($"Available Commands (bot v{Constants.Version}):```");
-        var seperator = use_table_formatting ? " | " : " - ";
-        
-        foreach (var cmd in CommandRegister.Instance.Commands)
+        public void SendMessage(SocketMessage messageArgs, IParameter printAsTextFile, string message, bool tts = false)
         {
-            var actualName = $"!rb_{cmd.Key}";
-            var line = $"{actualName.PadRight(maxCommandNameLength)}{seperator}{cmd.Value.HelpMessage}";
+            var printAsText = printAsTextFile.Value<bool>();
 
-            str.AppendLine(line);
+
+            if ((printAsText && printAsTextFile.WasProvidedByUser) || (message.Length > Constants.MaxCodeFormattedMessageLength && !printAsTextFile.WasProvidedByUser))
+            {
+                using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(message)))
+                {
+                    messageArgs.Channel.SendFileAsync(stream, "help.txt", "Available Commands:");
+                }
+            }
+            else
+            {
+                var outputText = MessageHelper.GetCodeFormattedMessages(message);
+                SendMessage(messageArgs, outputText);
+            }
         }
 
-        str.AppendLine("```");
-
-        var output = str.ToString();
-        SendMessage(messageArgs, str.ToString());
-
-        return true;
+        public void SendMessage(SocketMessage messageArgs, string message, bool tts = false)
+        {
+            messageArgs.Channel.SendMessageAsync(message, tts);
+        }
+        public void SendMessage(SocketMessage messageArgs, List<string> messages, bool tts = false)
+        {
+            for (var i = 0; i < messages.Count; i++)
+            {
+                messageArgs.Channel.SendMessageAsync(messages[i], tts);
+                Thread.Sleep(500);
+            }
+        }
     }
 }

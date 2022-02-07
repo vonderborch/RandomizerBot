@@ -5,10 +5,14 @@ namespace RandomizerBot
 {
     public class Bot
     {
-        private DiscordSocketClient _client;
+        private DiscordSocketClient? _client;
+
+        private BotCommandParser? _parser;
 
         public async Task RunBot()
         {
+            _parser = new BotCommandParser();
+
             _client = new DiscordSocketClient();
             _client.Log += Log;
             _client.MessageReceived += ClientOnMessageReceived;
@@ -33,9 +37,9 @@ namespace RandomizerBot
             return Task.CompletedTask;
         }
 
-        private static Task ClientOnMessageReceived(SocketMessage arg)
+        private Task ClientOnMessageReceived(SocketMessage arg)
         {
-            CommandParser.ParseCommand(arg.Content, arg);
+            _parser?.ParseCommand(arg.Content, arg);
             return Task.CompletedTask;
         }
     }

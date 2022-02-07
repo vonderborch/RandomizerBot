@@ -1,0 +1,1 @@
+﻿Server=upheaval-discord-bots.database.windows.net;Database=randomizer_bot;User Id=RandomizerBotRW;Password=IHRa!dKadd-fQ8UCyJtD+!nz-NF1#i3eltlxE%6M&xvHTtKi+5SOeo*prClBIRTxwp6M9Im#7l6PrcuJZ4o7IXODYBw5qRca_V$a%FP$JUcAWTf3#hzBpCAkoc+*tF?;

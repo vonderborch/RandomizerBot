@@ -1,36 +1,38 @@
-﻿using System.Text;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using RandomizerBot.Commands.Internal;
+using Velentr.Miscellaneous.CommandParsing;
 
-namespace RandomizerBot.Commands;
-
-public class Changelog : AbstractCommand
+namespace RandomizerBot.Commands
 {
-    public Changelog() : base("changelog", "Displays a changelog of the bot to the user")
+    public class Changelog : AbstractBotCommand
     {
-    }
-
-    public override void BuildParameterHelper()
-    {
-    }
-
-    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
-    {
-        if (!File.Exists("Changelog.txt"))
+        public Changelog() : base("changelog", "Prints out the bot's changelog", numArguments: 2)
         {
-            SendMessage(messageArgs, "Could not find the changelog! Please let the developer know of this issue!");
-        }
-        else
-        {
-            var str = new StringBuilder();
-            str.Append("```");
-            str.Append(File.ReadAllText("Changelog.txt"));
-            str.AppendLine("```");
-            str.AppendLine("A full changelog can be found on the github at https://github.com/vonderborch/RandomizerBot");
-
-            SendMessage(messageArgs, str.ToString());
+            AddArgument("git_link", "Whether to send the github changes link", typeof(bool), false);
+            AddArgument("local_changelog", "Whether to show the local changelog", typeof(bool), true);
         }
 
-        return true;
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        {
+            if (parameters["git_link"].Value<bool>())
+            {
+                SendMessage(messageArgs, "A full changelog can be found on the github at https://github.com/vonderborch/Velentr.Miscellaneous/commits/");
+            }
+
+            if (parameters["local_changelog"].Value<bool>())
+            {
+                if (!File.Exists("Changelog.txt"))
+                {
+                    SendMessage(messageArgs, "Could not find the changelog! Please let the developer know of this issue!");
+                }
+                else
+                {
+                    var text = File.ReadAllText("Changelog.txt");
+                    SendMessage(messageArgs, parameters["print_as_text_file"], text);
+                }
+            }
+
+            return true;
+        }
     }
 }

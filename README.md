@@ -1,5 +1,5 @@
 # RandomizerBot
-A simple and pretty badly coded bot enabling randomization of various things
+A simple and pretty badly coded Discord bot enabling randomization of various things. Used for a lot of experimental things :) 
 
 # Available Commands
 Command | Description
@@ -25,6 +25,3 @@ Command | Description
 !rb_disable_all_games_in_gamelist      | Disables all games from randomization in a game list
 !rb_enable_all_games_in_gamelist       | Enables all games for randomization in a game list
 !rb_randomize_game_list_games          | Views the games in a game list
-
-# Design Choices
-In order to keep costs down, this bot does not currently use a database. This is pretty bad, but it makes it significantly cheaper to run, so...yeah. Since this is used on personal Discord servers only it is fine for the time being. In the future, adding DB support would be good!

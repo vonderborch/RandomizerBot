@@ -1,22 +1,26 @@
 ﻿using Discord.WebSocket;
 using RandomizerBot.Commands.Internal;
+using Velentr.Miscellaneous.CommandParsing;
 
-namespace RandomizerBot.Commands;
-
-public class HelloWorld : AbstractCommand
+namespace RandomizerBot.Commands
 {
-    public HelloWorld() : base("hello_world", "Tells the user that they ran Hello World!")
+    public class HelloWorld : AbstractBotCommand
     {
-    }
+        public HelloWorld() : base("hello_world", "Tells the user that they ran Hello World!", true, 1, false)
+        {
+            AddArgument("noun", "What to say hello world too", typeof(string), string.Empty);
+        }
 
-    public override void BuildParameterHelper()
-    {
-    }
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        {
+            var noun = parameters["noun"].RawValue;
+            if (string.IsNullOrWhiteSpace(noun))
+            {
+                noun = messageArgs.Author.Username;
+            }
 
-    public override bool ExecuteInternal(Dictionary<string, string> args, SocketMessage messageArgs, SocketGuild server)
-    {
-        SendMessage(messageArgs, $"User '{messageArgs.Author.Username}' successfully ran helloworld!");
-
-        return true;
+            SendMessage(messageArgs, $"Hello {noun}!");
+            return true;
+        }
     }
 }

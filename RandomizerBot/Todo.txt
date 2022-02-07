@@ -1,8 +1,6 @@
-﻿- Version 1.1.0
---- Named Parameters
+﻿- Version 1.2.0
 --- Command Aliases
---- Hidden Parameters
---- Help parameter for each command
---- Ability to make commands not listed in the help menu (easter eggs)
-- Version 2.0.0
---- Use Databases!
+--- Make the core bot a separate library (to make it easier to spin up new bots in the future)
+--- More commands?
+- Version 1.3.0
+--- More commands?

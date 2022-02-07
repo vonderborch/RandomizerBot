@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RandomizerBot
+﻿namespace RandomizerBot
 {
     internal static class Constants
     {
-        public static string Version = "1.0.2";
+        public static int MaxMessageLength = 2000;
+
+        public static int MaxCodeFormattedMessageLength = MaxMessageLength - 8;
+
+        public static string Version = "1.1.0";
+
+        public static ulong BotUserID = 938221697365069894;
     }
 }

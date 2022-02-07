@@ -8,7 +8,7 @@ namespace RandomizerBot
     {
         private static readonly CommandRegister _instance = new CommandRegister();
 
-        private Dictionary<string, AbstractCommand> _commands = new Dictionary<string, AbstractCommand>();
+        private Dictionary<string, AbstractBotCommand> _commands = new Dictionary<string, AbstractBotCommand>();
 
         static CommandRegister()
         {
@@ -42,9 +42,9 @@ namespace RandomizerBot
 
         public static CommandRegister Instance => _instance;
 
-        public Dictionary<string, AbstractCommand> Commands => _commands;
+        public Dictionary<string, AbstractBotCommand> Commands => _commands;
 
-        public void RegisterCommand(AbstractCommand command)
+        public void RegisterCommand(AbstractBotCommand command)
         {
             _commands.Add(command.Command, command);
         }

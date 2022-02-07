@@ -1,7 +1,25 @@
-﻿1.0.2 (04-02-2022):
+﻿1.1.0 (07-02-2022):
+- Utilized Velentr.Miscellaneous.CommandParsing for processing commands, allowing:
+--- Named Parameters
+--- Hidden Parameters
+--- Help parameter for each command
+--- Easter Eggs
+--- All commands now use this underneath them
+- First easter eggs (PoC)
+- Standardized Command naming
+- Re-implementation of the Dice Base Command to be more flexible
+--- The FlipCoin Command now uses the Dice Command underneath since a coin flip is a D2
+- Extra parameters for the Changelog Command
+- A Database is now being used for the game lists (Sqlite)
+- Game lists are now named Item Lists
+- Added commands: Enable item, disable item, toggle all items, change weight, change item name, change list name
+
+1.0.2 (04-02-2022):
 - Bug fixes
+
 1.0.1 (03-02-2022):
 - Minor bug fixes
 - Added command to view all game lists visible to you
+
 1.0.0 (02-02-2022):
 - Initial release
