@@ -1,14 +1,35 @@
-﻿using System.Text;
-using Discord.WebSocket;
-using RandomizerBot.Commands.Internal;
+﻿/// <file>
+/// RandomizerBot\Commands\GenericDice.cs
+/// </file>
+///
+/// <copyright file="GenericDice.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the generic dice class.
+/// </summary>
+using SimpleDiscordBot.Commands;
+using System.Text;
 using Velentr.Miscellaneous.CommandParsing;
 
 namespace RandomizerBot.Commands
 {
+    /// <summary>
+    /// A generic dice.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractBotCommand"/>
     public class GenericDice : AbstractBotCommand
     {
+        /// <summary>
+        /// (Immutable) the randomizer.
+        /// </summary>
         protected readonly Random _randomizer;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public GenericDice() : base($"roll_die", $"Rolls a Die with variable sides dice for the user", numArguments: 3)
         {
             _randomizer = new Random();
@@ -18,7 +39,17 @@ namespace RandomizerBot.Commands
             AddArgument("show_individual_results", "Whether to show individual results. Defaults to false.", typeof(bool), false);
         }
 
-        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="parameters">   Options for controlling the operation. </param>
+        /// <param name="messageInfo">  Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, MessageInfo messageInfo)
         {
             // Get the args...
             var faces = parameters["faces"].Value<int>();
@@ -73,21 +104,49 @@ namespace RandomizerBot.Commands
                     str.AppendLine($"{i + 1} Pips: {faceCount[i]}");
                 }
             }
-            
-            SendMessage(messageArgs, parameters["print_as_text_file"], str.ToString());
+
+            SendMessage(str.ToString(), messageInfo, true);
             return true;
         }
 
+        /// <summary>
+        /// Gets single roll result text.
+        /// </summary>
+        ///
+        /// <param name="roll"> The roll. </param>
+        ///
+        /// <returns>
+        /// The single roll result text.
+        /// </returns>
         protected string GetSingleRollResultText(int roll)
         {
             return $"Face = {roll + 1} Pips";
         }
 
+        /// <summary>
+        /// Gets individual roll result text.
+        /// </summary>
+        ///
+        /// <param name="rollNumber">   The roll number. </param>
+        /// <param name="roll">         The roll. </param>
+        ///
+        /// <returns>
+        /// The individual roll result text.
+        /// </returns>
         protected string GetIndividualRollResultText(int rollNumber, int roll)
         {
             return $"Roll #{rollNumber + 1}: FACE = {roll + 1} Pips";
         }
 
+        /// <summary>
+        /// Gets totals text.
+        /// </summary>
+        ///
+        /// <param name="results">  The results. </param>
+        ///
+        /// <returns>
+        /// The totals text.
+        /// </returns>
         protected string GetTotalsText(List<int> results)
         {
             var str = new StringBuilder();

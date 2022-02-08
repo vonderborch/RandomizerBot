@@ -1,25 +1,53 @@
-﻿using Discord.WebSocket;
-using RandomizerBot.Commands.Internal;
+﻿/// <file>
+/// RandomizerBot\Commands\HelloWorld.cs
+/// </file>
+///
+/// <copyright file="HelloWorld.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the hello world class.
+/// </summary>
+using SimpleDiscordBot.Commands;
 using Velentr.Miscellaneous.CommandParsing;
 
 namespace RandomizerBot.Commands
 {
+    /// <summary>
+    /// A hello world.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractBotCommand"/>
     public class HelloWorld : AbstractBotCommand
     {
-        public HelloWorld() : base("hello_world", "Tells the user that they ran Hello World!", true, 1, false)
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public HelloWorld() : base("hello_world", "Says hello to something", true, 1, false)
         {
-            AddArgument("noun", "What to say hello world too", typeof(string), string.Empty);
+            AddArgument("noun", "What to say hello too", typeof(string), string.Empty);
         }
 
-        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="parameters">   Options for controlling the operation. </param>
+        /// <param name="messageInfo">  Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, MessageInfo messageInfo)
         {
             var noun = parameters["noun"].RawValue;
             if (string.IsNullOrWhiteSpace(noun))
             {
-                noun = messageArgs.Author.Username;
+                noun = messageInfo.DiscordMessageInfo.Author.Username;
             }
 
-            SendMessage(messageArgs, $"Hello {noun}!");
+            SendMessage($"Hello {noun}!", messageInfo);
             return true;
         }
     }

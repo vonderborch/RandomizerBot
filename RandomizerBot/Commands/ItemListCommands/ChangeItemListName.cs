@@ -1,60 +1,58 @@
-﻿using Discord.WebSocket;
+﻿/// <file>
+/// RandomizerBot\Commands\ItemListCommands\ChangeItemListName.cs
+/// </file>
+///
+/// <copyright file="ChangeItemListName.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the change item list name class.
+/// </summary>
 using RandomizerBot.Commands.ItemListCommands.Objects;
-using Velentr.Miscellaneous.CommandParsing;
+using SimpleDiscordBot.Commands;
 
 namespace RandomizerBot.Commands.ItemListCommands
 {
+    /// <summary>
+    /// A change item list name.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractItemListCommand"/>
     public class ChangeItemListName : AbstractItemListCommand
     {
-        public ChangeItemListName() : base("itemlist_change_list_name", "Changes the name of an item list")
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public ChangeItemListName() : base("itemlist_change_list_name", "Changes the name of an item list", needsModPerms: true)
         {
             AddArgument<string>("new_name", "The new name for the item", string.Empty, true);
         }
 
-        public override bool ExecuteInternal(ListKey key, ListKey personalKey, ListKey serverKey, bool personalExists, bool serverExists, Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="itemListParameters">   Options for controlling the item list. </param>
+        /// <param name="messageInfo">          Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        ///
+        /// <seealso cref="RandomizerBot.Commands.ItemListCommands.AbstractItemListCommand.ExecuteInternal(Parameters,MessageInfo)"/>
+        public override bool ExecuteInternal(Parameters itemListParameters, MessageInfo messageInfo)
         {
-            var newName = parameters["new_name"].Value<string>();
+            var newName = messageInfo.CommandParameters["new_name"].Value<string>();
             if (string.IsNullOrWhiteSpace(newName))
             {
-                SendMessage(messageArgs, "A valid non-empty new name must be provided!");
+                SendMessage("A valid non-empty new name must be provided!", messageInfo);
                 return true;
-            }
-
-            // Check if the item list already exists
-            var newListKey = key;
-            newListKey.Name = newName;
-            if (Database.Instance.DB.ItemListExists(newListKey))
-            {
-                SendMessage(messageArgs, $"An item list with the name [{newName}] already exists!");
-                return true;
-            }
-
-            if (!key.IsPersonal)
-            {
-                // if we're deleting a server-owned list, make sure the user has at least mod-level perms or was the original creator
-                var creator = Database.Instance.DB.GetListCreator(key);
-
-                if (creator == null)
-                {
-                    SendMessage(messageArgs, $"A {(key.IsPersonal ? "personal" : "server-owned")} list with the name [{key.Name}] does not exist!");
-                    return true;
-                }
-                else
-                {
-                    var author = server.GetUser(messageArgs.Author.Id);
-                    var perms = author.GuildPermissions;
-
-                    if (!perms.ModerateMembers || author.Id != (ulong)creator)
-                    {
-                        SendMessage(messageArgs, $"You must be a moderator or original creator of the list to change the name of server-owned lists!");
-                        return true;
-                    }
-                }
             }
 
             // change the item list name
-            Database.Instance.DB.UpdateItemListName(key, newName);
-            SendMessage(messageArgs, $"The name of the {(key.IsPersonal ? "personal" : "server-owned")} item list [{key.Name}] has been updated to [{newName}]!");
+            Database.Instance.DB.UpdateItemListName(itemListParameters.Key, newName);
+            SendMessage($"The name of the {(itemListParameters.Key.IsPersonal ? "personal" : "server-owned")} item list [{itemListParameters.Key.Name}] has been updated to [{newName}]!", messageInfo);
 
             return true;
         }

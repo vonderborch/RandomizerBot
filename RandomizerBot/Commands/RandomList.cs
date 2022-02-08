@@ -1,15 +1,35 @@
-﻿using System.Text;
-using Discord.WebSocket;
-using RandomizerBot.Commands.Internal;
-using RandomizerBot.Helpers;
+﻿/// <file>
+/// RandomizerBot\Commands\RandomList.cs
+/// </file>
+///
+/// <copyright file="RandomList.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the random list class.
+/// </summary>
+using SimpleDiscordBot.Commands;
+using System.Text;
 using Velentr.Miscellaneous.CommandParsing;
 
 namespace RandomizerBot.Commands
 {
+    /// <summary>
+    /// List of randoms.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractBotCommand"/>
     public class RandomList : AbstractBotCommand
     {
+        /// <summary>
+        /// (Immutable) the randomizer.
+        /// </summary>
         protected readonly Random _randomizer;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public RandomList() : base($"random_list", $"Randomizes a comma-separated list of items.", numArguments: 3)
         {
             _randomizer = new Random();
@@ -19,7 +39,17 @@ namespace RandomizerBot.Commands
             AddArgument("show_original_list", "Shows the list in the original order. Defaults to False.", typeof(bool), false);
         }
 
-        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="parameters">   Options for controlling the operation. </param>
+        /// <param name="messageInfo">  Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, MessageInfo messageInfo)
         {
             // Get the args...
             var itemsRaw = parameters["items"].RawValue;
@@ -61,8 +91,8 @@ namespace RandomizerBot.Commands
                     str.AppendLine(itemsBackup[i]);
                 }
             }
-            
-            SendMessage(messageArgs, parameters["print_as_text_file"], str.ToString());
+
+            SendMessage(str.ToString(), messageInfo, true);
             return true;
         }
     }

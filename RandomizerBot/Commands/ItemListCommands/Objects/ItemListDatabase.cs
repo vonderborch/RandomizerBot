@@ -1,15 +1,41 @@
-﻿using System.Data;
-using System.Text;
+﻿/// <file>
+/// RandomizerBot\Commands\ItemListCommands\Objects\ItemListDatabase.cs
+/// </file>
+///
+/// <copyright file="ItemListDatabase.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the item list database class.
+/// </summary>
 using Microsoft.Data.Sqlite;
+using System.Data;
+using System.Text;
 using Velentr.Miscellaneous.Sqlite;
 
 namespace RandomizerBot.Commands.ItemListCommands.Objects
 {
+    /// <summary>
+    /// An item list database.
+    /// </summary>
+    ///
+    /// <seealso cref="Database"/>
     public class ItemListDatabase : Velentr.Miscellaneous.Sqlite.Database
     {
+        /// <summary>
+        /// The database version.
+        /// </summary>
         private static string DatabaseVersion = "1";
+
+        /// <summary>
+        /// The database file.
+        /// </summary>
         private static string DatabaseFile = "randomizer-bot.db";
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public ItemListDatabase() : base(DatabaseFile)
         {
             // if the database exists, delete it if the version doesn't match what we want
@@ -71,7 +97,6 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
                     [CreatedBy] nvarchar(512) NOT NULL
                 );
 
-
                 INSERT INTO SaveInfo
                     (Key, Value)
                 VALUES
@@ -83,6 +108,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             }
         }
 
+        /// <summary>
+        /// Queries if a given item list exists.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
         public bool ItemListExists(ListKey key)
         {
             var command = new SqliteCommand("SELECT 1 AS ListExists FROM ItemLists AS gl WHERE gl.Name = @Name AND gl.OwnerID = @ID AND gl.IsLinkedToServer = @ServerOwned LIMIT 1;");
@@ -93,6 +127,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return result.Count > 0;
         }
 
+        /// <summary>
+        /// Creates item list.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
+        ///
+        /// <returns>
+        /// The new item list.
+        /// </returns>
         public long CreateItemList(ListKey key)
         {
             var sql = @"
@@ -113,6 +156,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return result.Count == 0 ? -1 : (long)result[0]["ID"];
         }
 
+        /// <summary>
+        /// Gets list creator.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
+        ///
+        /// <returns>
+        /// The list creator.
+        /// </returns>
         public ulong? GetListCreator(ListKey key)
         {
             var sql = @"
@@ -131,16 +183,53 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return result.Count == 0 ? null : (ulong)result[0]["CreatedBy"];
         }
 
+        /// <summary>
+        /// Encapsulates the result of a view all lists.
+        /// </summary>
+        ///
+        /// <seealso cref="IModelParser"/>
         public class ViewAllListsResult : IModelParser
         {
+            /// <summary>
+            /// The identifier.
+            /// </summary>
             public long ID;
+
+            /// <summary>
+            /// The name.
+            /// </summary>
             public string Name = string.Empty;
+
+            /// <summary>
+            /// True if is linked to server, false if not.
+            /// </summary>
             public bool IsLinkedToServer;
+
+            /// <summary>
+            /// The identifier that owns this item.
+            /// </summary>
             public ulong OwnerID;
+
+            /// <summary>
+            /// The created at Date/Time.
+            /// </summary>
             public DateTime CreatedAt;
+
+            /// <summary>
+            /// Amount to created by.
+            /// </summary>
             public ulong CreatedBy;
+
+            /// <summary>
+            /// Number of items.
+            /// </summary>
             public long ItemCount;
 
+            /// <summary>
+            /// Parses the given row.
+            /// </summary>
+            ///
+            /// <param name="row">  The row. </param>
             public void Parse(IDataReader row)
             {
                 ID = Convert.ToInt64(row["ID"]);
@@ -154,6 +243,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
                 ItemCount = Convert.ToInt64(row["ItemCount"]);
             }
 
+            /// <summary>
+            /// Gets a text.
+            /// </summary>
+            ///
+            /// <param name="columns">  The columns. </param>
+            ///
+            /// <returns>
+            /// The text.
+            /// </returns>
             public List<string> GetText(List<string> columns)
             {
                 // the below is terrible and should _not_ be done, but it was simple, so...
@@ -166,12 +264,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
                         case "id":
                             output.Add(ID.ToString());
                             break;
+
                         case "name":
                             output.Add(Name.ToString());
                             break;
+
                         case "is server list":
                             output.Add(IsLinkedToServer.ToString());
                             break;
+
                         case "# items":
                             output.Add(ItemCount.ToString());
                             break;
@@ -182,6 +283,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             }
         }
 
+        /// <summary>
+        /// View all lists.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
+        ///
+        /// <returns>
+        /// A List&lt;ViewAllListsResult&gt;
+        /// </returns>
         public List<ViewAllListsResult> ViewAllLists(ListKey key)
         {
             var sql = @"
@@ -219,6 +329,11 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return ExecuteQuery<ViewAllListsResult>(command);
         }
 
+        /// <summary>
+        /// Deletes the item list described by key.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
         public void DeleteItemList(ListKey key)
         {
             var sql = @"
@@ -233,13 +348,38 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             ExecuteNonQuery(command);
         }
 
+        /// <summary>
+        /// An item list items.
+        /// </summary>
+        ///
+        /// <seealso cref="IModelParser"/>
         public class ItemListItems : IModelParser
         {
+            /// <summary>
+            /// The identifier.
+            /// </summary>
             public long ID;
+
+            /// <summary>
+            /// The name.
+            /// </summary>
             public string Name = string.Empty;
+
+            /// <summary>
+            /// True if is enabled for randomization, false if not.
+            /// </summary>
             public bool IsEnabledForRandomization;
+
+            /// <summary>
+            /// The weight.
+            /// </summary>
             public int Weight;
 
+            /// <summary>
+            /// Parses the given row.
+            /// </summary>
+            ///
+            /// <param name="row">  The row. </param>
             public void Parse(IDataReader row)
             {
                 ID = Convert.ToInt64(row["ID"]);
@@ -250,6 +390,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
                 IsEnabledForRandomization = Convert.ToBoolean(row["IsEnabledForRandomization"]);
             }
 
+            /// <summary>
+            /// Gets a text.
+            /// </summary>
+            ///
+            /// <param name="columns">  The columns. </param>
+            ///
+            /// <returns>
+            /// The text.
+            /// </returns>
             public List<string> GetText(List<string> columns)
             {
                 // the below is terrible and should _not_ be done, but it was simple, so...
@@ -262,12 +411,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
                         case "id":
                             output.Add(ID.ToString());
                             break;
+
                         case "name":
                             output.Add(Name.ToString());
                             break;
+
                         case "randomization enabled?":
                             output.Add(IsEnabledForRandomization.ToString());
                             break;
+
                         case "randomization weight":
                             output.Add(Weight.ToString());
                             break;
@@ -278,6 +430,16 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             }
         }
 
+        /// <summary>
+        /// Queries if a given item in item list exists.
+        /// </summary>
+        ///
+        /// <param name="key">      The key. </param>
+        /// <param name="itemName"> Name of the item. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
         public bool ItemInItemListExists(ListKey key, string itemName)
         {
             var sql = @"
@@ -300,6 +462,17 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return result.Count > 0;
         }
 
+        /// <summary>
+        /// Adds an item to item list.
+        /// </summary>
+        ///
+        /// <param name="key">      The key. </param>
+        /// <param name="name">     The name. </param>
+        /// <param name="weight">   The weight. </param>
+        ///
+        /// <returns>
+        /// A long.
+        /// </returns>
         public long AddItemToItemList(ListKey key, string name, int weight)
         {
             var sql = @"
@@ -312,7 +485,7 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             ";
 
             var command = new SqliteCommand(sql);
-            
+
             key.AttachParameters(command, false);
             command.Parameters.Add(new SqliteParameter("ItemName", name));
             command.Parameters.Add(new SqliteParameter("Randomize", true));
@@ -324,6 +497,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return result.Count == 0 ? -1 : (long)result[0]["ID"];
         }
 
+        /// <summary>
+        /// Gets item list items.
+        /// </summary>
+        ///
+        /// <param name="key">  The key. </param>
+        ///
+        /// <returns>
+        /// The item list items.
+        /// </returns>
         public List<ItemListItems> GetItemListItems(ListKey key)
         {
             var sql = @"
@@ -346,6 +528,12 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             return ExecuteQuery<ItemListItems>(command);
         }
 
+        /// <summary>
+        /// Deletes the item in list.
+        /// </summary>
+        ///
+        /// <param name="key">      The key. </param>
+        /// <param name="itemName"> Name of the item. </param>
         public void DeleteItemInList(ListKey key, string itemName)
         {
             var sql = @"
@@ -359,6 +547,15 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             ExecuteNonQuery(command);
         }
 
+        /// <summary>
+        /// Updates the item in list.
+        /// </summary>
+        ///
+        /// <param name="key">          The key. </param>
+        /// <param name="oldName">      Name of the old. </param>
+        /// <param name="name">         The name. </param>
+        /// <param name="weight">       (Optional) The weight. </param>
+        /// <param name="isEnabled">    (Optional) The is enabled. </param>
         public void UpdateItemInList(ListKey key, string oldName, string name, int weight = 0, bool? isEnabled = null)
         {
             var sql = new StringBuilder();
@@ -388,6 +585,12 @@ namespace RandomizerBot.Commands.ItemListCommands.Objects
             ExecuteNonQuery(command);
         }
 
+        /// <summary>
+        /// Updates the item list name.
+        /// </summary>
+        ///
+        /// <param name="key">      The key. </param>
+        /// <param name="newName">  Name of the new. </param>
         public void UpdateItemListName(ListKey key, string newName)
         {
             var sql = @"

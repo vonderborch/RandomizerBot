@@ -1,26 +1,56 @@
-﻿using Discord.WebSocket;
+﻿/// <file>
+/// RandomizerBot\Commands\ItemListCommands\ViewItemListItems.cs
+/// </file>
+///
+/// <copyright file="ViewItemListItems.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the view item list items class.
+/// </summary>
 using RandomizerBot.Commands.ItemListCommands.Objects;
-using Velentr.Miscellaneous.CommandParsing;
+using SimpleDiscordBot.Commands;
 using Velentr.Miscellaneous.StringHelpers;
 
 namespace RandomizerBot.Commands.ItemListCommands
 {
+    /// <summary>
+    /// A view item list items.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractItemListCommand"/>
     public class ViewItemListItems : AbstractItemListCommand
     {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public ViewItemListItems() : base("itemlist_view_items", "Views all items in an item list")
         {
         }
 
-        public override bool ExecuteInternal(ListKey key, ListKey personalKey, ListKey serverKey, bool personalExists, bool serverExists, Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="itemListParameters">   Options for controlling the item list. </param>
+        /// <param name="messageInfo">          Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        ///
+        /// <seealso cref="RandomizerBot.Commands.ItemListCommands.AbstractItemListCommand.ExecuteInternal(Parameters,MessageInfo)"/>
+        public override bool ExecuteInternal(Parameters itemListParameters, MessageInfo messageInfo)
         {
-            var lists = Database.Instance.DB.GetItemListItems(key);
+            var lists = Database.Instance.DB.GetItemListItems(itemListParameters.Key);
             if (lists.Count == 0)
             {
                 // no items :(
-                SendMessage(messageArgs, parameters["print_as_text_file"], "There are no items in the specified list!");
+                SendMessage("There are no items in the specified list!", messageInfo);
                 return true;
             }
-            
+
             var columns = new List<string>()
             {
                 "Name", "Randomization Enabled?", "Randomization Weight"
@@ -28,7 +58,7 @@ namespace RandomizerBot.Commands.ItemListCommands
             var rows = lists.Select(x => x.GetText(columns)).ToList();
             var table = TableOutputHelper.ConvertToTable(columns, rows);
 
-            SendMessage(messageArgs, parameters["print_as_text_file"], table);
+            SendMessage(table, messageInfo, true);
 
             return true;
         }

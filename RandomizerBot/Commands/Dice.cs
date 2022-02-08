@@ -1,20 +1,50 @@
-﻿using System.Text;
-using Discord.WebSocket;
-using RandomizerBot.Commands.Internal;
+﻿/// <file>
+/// RandomizerBot\Commands\Dice.cs
+/// </file>
+///
+/// <copyright file="Dice.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the dice class.
+/// </summary>
+using SimpleDiscordBot.Commands;
+using System.Text;
 using Velentr.Miscellaneous.CommandParsing;
 
 namespace RandomizerBot.Commands
 {
+    /// <summary>
+    /// A dice.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractBotCommand"/>
     public class Dice : AbstractBotCommand
     {
+        /// <summary>
+        /// (Immutable) the randomizer.
+        /// </summary>
         protected readonly Random _randomizer;
+
+        /// <summary>
+        /// The faces.
+        /// </summary>
         protected int _faces = 0;
 
-        public Dice(int faces, string nameOverride = "", string descriptionOverride = "", bool isHidden = false) : base(string.IsNullOrWhiteSpace(nameOverride) ? $"roll_d{faces}" : nameOverride, $"Rolls a D{faces} dice for the user", numArguments: 2, isHidden: isHidden, autoRegisterCommand: false)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        ///
+        /// <param name="faces">                The faces. </param>
+        /// <param name="nameOverride">         (Optional) The name override. </param>
+        /// <param name="descriptionOverride">  (Optional) The description override. </param>
+        /// <param name="isHidden">             (Optional) True if is hidden, false if not. </param>
+        public Dice(int faces, string nameOverride = "", string descriptionOverride = "", bool isHidden = false) : base(string.IsNullOrWhiteSpace(nameOverride) ? $"roll_d{faces}" : nameOverride, $"Rolls a D{faces} dice for the user", numArguments: 2, isHidden: isHidden)
         {
             _randomizer = new Random();
             _faces = faces;
-            
+
             if (!string.IsNullOrWhiteSpace(descriptionOverride))
             {
                 Description = descriptionOverride;
@@ -24,7 +54,17 @@ namespace RandomizerBot.Commands
             AddArgument("show_individual_results", "Whether to show individual results. Defaults to false.", typeof(bool), false);
         }
 
-        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="parameters">   Options for controlling the operation. </param>
+        /// <param name="messageInfo">  Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        public override bool ExecuteInternal(Dictionary<string, IParameter> parameters, MessageInfo messageInfo)
         {
             // Get the args...
             var times = parameters["times"].Value<int>();
@@ -75,20 +115,48 @@ namespace RandomizerBot.Commands
                 }
             }
 
-            SendMessage(messageArgs, parameters["print_as_text_file"], str.ToString());
+            SendMessage(str.ToString(), messageInfo, true);
             return true;
         }
 
+        /// <summary>
+        /// Gets single roll result text.
+        /// </summary>
+        ///
+        /// <param name="roll"> The roll. </param>
+        ///
+        /// <returns>
+        /// The single roll result text.
+        /// </returns>
         protected virtual string GetSingleRollResultText(int roll)
         {
             return $"Face = {roll + 1} Pips";
         }
 
+        /// <summary>
+        /// Gets individual roll result text.
+        /// </summary>
+        ///
+        /// <param name="rollNumber">   The roll number. </param>
+        /// <param name="roll">         The roll. </param>
+        ///
+        /// <returns>
+        /// The individual roll result text.
+        /// </returns>
         protected virtual string GetIndividualRollResultText(int rollNumber, int roll)
         {
             return $"Roll #{rollNumber + 1}: FACE = {roll + 1} Pips";
         }
 
+        /// <summary>
+        /// Gets totals text.
+        /// </summary>
+        ///
+        /// <param name="results">  The results. </param>
+        ///
+        /// <returns>
+        /// The totals text.
+        /// </returns>
         protected virtual string GetTotalsText(List<int> results)
         {
             var str = new StringBuilder();

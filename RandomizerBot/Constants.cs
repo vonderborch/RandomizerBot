@@ -1,13 +1,24 @@
-﻿namespace RandomizerBot
+﻿/// <file>
+/// RandomizerBot\Constants.cs
+/// </file>
+///
+/// <copyright file="Constants.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the constants class.
+/// </summary>
+namespace RandomizerBot
 {
+    /// <summary>
+    /// A constants.
+    /// </summary>
     internal static class Constants
     {
-        public static int MaxMessageLength = 2000;
-
-        public static int MaxCodeFormattedMessageLength = MaxMessageLength - 8;
-
-        public static string Version = "1.1.0";
-
+        /// <summary>
+        /// Identifier for the bottom user.
+        /// </summary>
         public static ulong BotUserID = 938221697365069894;
     }
 }

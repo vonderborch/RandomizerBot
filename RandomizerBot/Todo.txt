@@ -1,6 +1,5 @@
-﻿- Version 1.2.0
---- Command Aliases
---- Make the core bot a separate library (to make it easier to spin up new bots in the future)
+﻿- Version 1.3.0
+--- More Command Aliases
 --- More commands?
-- Version 1.3.0
+- Version 1.4.0
 --- More commands?

@@ -1,4 +1,11 @@
-﻿1.1.0 (07-02-2022):
+﻿1.2.0 (08-02-2022):
+- Split the core bot functionality into a separate library: SimpleDiscordBot
+--- Makes it easier to spin up new bots
+--- Makes it easier to maintain this bot
+- Refactor of all commands to use the new framework, most commands have been cleaned up too
+- Implemented first command aliases as PoC (help command)
+
+1.1.0 (07-02-2022):
 - Utilized Velentr.Miscellaneous.CommandParsing for processing commands, allowing:
 --- Named Parameters
 --- Hidden Parameters

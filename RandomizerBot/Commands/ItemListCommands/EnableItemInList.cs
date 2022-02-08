@@ -1,43 +1,72 @@
-﻿using Discord.WebSocket;
+﻿/// <file>
+/// RandomizerBot\Commands\ItemListCommands\EnableItemInList.cs
+/// </file>
+///
+/// <copyright file="EnableItemInList.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the enable item in list class.
+/// </summary>
 using RandomizerBot.Commands.ItemListCommands.Objects;
-using Velentr.Miscellaneous.CommandParsing;
+using SimpleDiscordBot.Commands;
 
 namespace RandomizerBot.Commands.ItemListCommands
 {
+    /// <summary>
+    /// List of enable item ins.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractItemListCommand"/>
     public class EnableItemInList : AbstractItemListCommand
     {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public EnableItemInList() : base("itemlist_enable_item", "Enables an item in an item list for randomization")
         {
             AddArgument<string>("item", "The item to update If it contains commas, each comma-separated value will be treated as a different item to enable", string.Empty, true);
         }
 
-        public override bool ExecuteInternal(ListKey key, ListKey personalKey, ListKey serverKey, bool personalExists, bool serverExists, Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="itemListParameters">   Options for controlling the item list. </param>
+        /// <param name="messageInfo">          Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        ///
+        /// <seealso cref="RandomizerBot.Commands.ItemListCommands.AbstractItemListCommand.ExecuteInternal(Parameters,MessageInfo)"/>
+        public override bool ExecuteInternal(Parameters itemListParameters, MessageInfo messageInfo)
         {
             // get and validate args
-            var rawItem = parameters["item"].Value<string>();
+            var rawItem = messageInfo.CommandParameters["item"].Value<string>();
             if (string.IsNullOrWhiteSpace(rawItem))
             {
-                SendMessage(messageArgs, "A valid non-empty name must be provided!");
+                SendMessage("A valid non-empty name must be provided!", messageInfo);
                 return true;
             }
-
 
             var items = rawItem.Split(',', StringSplitOptions.RemoveEmptyEntries);
             foreach (var item in items)
             {
                 // Check if the item already exists
-                if (!Database.Instance.DB.ItemInItemListExists(key, item))
+                if (!Database.Instance.DB.ItemInItemListExists(itemListParameters.Key, item))
                 {
-                    SendMessage(messageArgs, $"An item with the name [{item}] does not exist in the list [{key.Name}]!");
+                    SendMessage($"An item with the name [{item}] does not exist in the list [{itemListParameters.Key.Name}]!", messageInfo);
                     Thread.Sleep(250);
                     continue;
                 }
 
                 // updates the item
-                Database.Instance.DB.UpdateItemInList(key, item, item, isEnabled: true);
+                Database.Instance.DB.UpdateItemInList(itemListParameters.Key, item, item, isEnabled: true);
             }
 
-            SendMessage(messageArgs, $"All requested items ({rawItem}) have been enabled for randomization in the {(key.IsPersonal ? "personal" : "server-owned")} list with the name [{key.Name}]!");
+            SendMessage($"All requested items ({rawItem}) have been enabled for randomization in the {(itemListParameters.Key.IsPersonal ? "personal" : "server-owned")} list with the name [{itemListParameters.Key.Name}]!", messageInfo);
 
             return true;
         }

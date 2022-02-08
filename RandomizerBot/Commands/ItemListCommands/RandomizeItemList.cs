@@ -1,15 +1,36 @@
-﻿using System.Text;
-using Discord.WebSocket;
+﻿/// <file>
+/// RandomizerBot\Commands\ItemListCommands\RandomizeItemList.cs
+/// </file>
+///
+/// <copyright file="RandomizeItemList.cs" company="">
+/// Copyright (c) 2022 Christian Webber. All rights reserved.
+/// </copyright>
+///
+/// <summary>
+/// Implements the randomize item list class.
+/// </summary>
 using RandomizerBot.Commands.ItemListCommands.Objects;
-using Velentr.Miscellaneous.CommandParsing;
+using SimpleDiscordBot.Commands;
+using System.Text;
 using Velentr.Miscellaneous.StringHelpers;
 
 namespace RandomizerBot.Commands.ItemListCommands
 {
+    /// <summary>
+    /// List of randomize items.
+    /// </summary>
+    ///
+    /// <seealso cref="AbstractItemListCommand"/>
     public class RandomizeItemList : AbstractItemListCommand
     {
+        /// <summary>
+        /// (Immutable) the randomizer.
+        /// </summary>
         private readonly Random _randomizer;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public RandomizeItemList() : base("itemlist_randomize", "Randomizes an item list")
         {
             _randomizer = new Random();
@@ -18,31 +39,43 @@ namespace RandomizerBot.Commands.ItemListCommands
             AddArgument<bool>("show_first_item_only", "Whether to show only the first item in the randomized list order", true);
         }
 
-        public override bool ExecuteInternal(ListKey key, ListKey personalKey, ListKey serverKey, bool personalExists, bool serverExists, Dictionary<string, IParameter> parameters, SocketMessage messageArgs, SocketGuild server)
+        /// <summary>
+        /// Executes the 'internal' operation.
+        /// </summary>
+        ///
+        /// <param name="itemListParameters">   Options for controlling the item list. </param>
+        /// <param name="messageInfo">          Information describing the message. </param>
+        ///
+        /// <returns>
+        /// True if it succeeds, false if it fails.
+        /// </returns>
+        ///
+        /// <seealso cref="RandomizerBot.Commands.ItemListCommands.AbstractItemListCommand.ExecuteInternal(Parameters,MessageInfo)"/>
+        public override bool ExecuteInternal(Parameters itemListParameters, MessageInfo messageInfo)
         {
-            var items = Database.Instance.DB.GetItemListItems(key);
+            var items = Database.Instance.DB.GetItemListItems(itemListParameters.Key);
             if (items.Count == 0)
             {
                 // no items :(
-                SendMessage(messageArgs, parameters["print_as_text_file"], "There are no items in the specified list!");
+                SendMessage("There are no items in the specified list!", messageInfo);
                 return true;
             }
 
             var enabledItems = items.Where(x => x.IsEnabledForRandomization).ToList();
             if (enabledItems.Count == 0)
             {
-                SendMessage(messageArgs, parameters["print_as_text_file"], "There are no items enabled for randomization in the specified list!");
+                SendMessage("There are no items enabled for randomization in the specified list!", messageInfo);
                 return true;
             }
 
             var randomOrder = enabledItems.OrderBy(x => _randomizer.NextDouble() * x.Weight).ToList();
 
-            var showOriginal = parameters["show_original_list"].Value<bool>();
-            var showAll = !parameters["show_first_item_only"].Value<bool>();
+            var showOriginal = messageInfo.CommandParameters["show_original_list"].Value<bool>();
+            var showAll = !messageInfo.CommandParameters["show_first_item_only"].Value<bool>();
 
             if (!showAll && !showOriginal)
             {
-                SendMessage(messageArgs, $"Top Randomized Item: {randomOrder[0].Name}");
+                SendMessage($"Top Randomized Item: {randomOrder[0].Name}", messageInfo);
             }
             else
             {
@@ -54,19 +87,18 @@ namespace RandomizerBot.Commands.ItemListCommands
                 };
                 var randomListString = randomOrder.Select(x => x.GetText(columns)).ToList();
                 str.AppendLine("Randomized List:");
-                str.AppendLine(TableOutputHelper.ConvertToTable(columns, randomListString));
+                str.AppendLine(TableOutputHelper.ConvertToTable(columns, randomListString, includeHeaders: false));
 
                 if (showOriginal)
                 {
                     var originalList = enabledItems.Select(x => x.GetText(columns)).ToList();
                     str.AppendLine(" ");
                     str.AppendLine("Original List:");
-                    str.AppendLine(TableOutputHelper.ConvertToTable(columns, originalList, addSeparatorText: false, includeHeaders: false));
+                    str.AppendLine(TableOutputHelper.ConvertToTable(columns, originalList, includeHeaders: false));
                 }
 
-                SendMessage(messageArgs, parameters["print_as_text_file"], str.ToString());
+                SendMessage(str.ToString(), messageInfo, true);
             }
-
 
             return true;
         }
